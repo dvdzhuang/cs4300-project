@@ -46,8 +46,8 @@
                     cube.rotation.y = rot;
                 })
                 bullets.forEach((bullet, ndx) => {
-                    bullet.position.x -= Math.sin(bullet.rotation.y) * 0.1;
-                    bullet.position.z -= Math.cos(bullet.rotation.y) * 0.1;
+                    bullet.position.x -= Math.sin(bullet.rotation.y + Math.PI / 2) * 0.1;
+                    bullet.position.z -= Math.cos(bullet.rotation.y + Math.PI / 2) * 0.1;
                 })
                 renderer.render(scene, camera);
                 requestAnimationFrame(render);
@@ -72,10 +72,11 @@
             }
             function makeBullet() {
                 const bullet = makeInstance(coneGeo, 0xff0000, 0);
+                
+                bullet.rotation.z = -Math.PI / 2;
+                bullet.rotation.y = camera.rotation.y - Math.PI / 2 ;
                 bullet.position.z = camera.position.z;
-                bullet.rotation.y = camera.rotation.y;
-                bullet.rotation.x = -1 * Math.PI / 2;
-                //bullet.rotation.y = -1 * Math.PI * Math.sin(camera.rotation.y) / 2;
+
                 return bullet;
             }
             const shapes = [
