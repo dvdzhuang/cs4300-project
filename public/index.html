@@ -14,6 +14,7 @@
     <canvas id="canvas"></canvas>
     <script type="module">
         import * as THREE from './three.module.js';
+        import { geometry as prism } from './geometry1.js';
 
         function main() {
             const canvas = document.querySelector('#canvas');
@@ -22,7 +23,7 @@
             const fov = 75;
             const aspect = 2;  // canvas default = 2 = 300/150
             const near = 0.1;
-            const far = 5;
+            const far = 7;
             const camera = new THREE.PerspectiveCamera
                 (fov, aspect, near, far);
 
@@ -45,25 +46,53 @@
                     cube.rotation.x = rot;
                     cube.rotation.y = rot;
                 })
+                var toRemove = -1;
                 bullets.forEach((bullet, ndx) => {
+                    if (Math.abs(bullet.position.x) > far || Math.abs(bullet.position.z) > far + 3) {
+                        toRemove = ndx
+                    }
                     bullet.position.x -= Math.sin(bullet.rotation.y + Math.PI / 2) * 0.1;
                     bullet.position.z -= Math.cos(bullet.rotation.y + Math.PI / 2) * 0.1;
                 })
+                for (let i = 0; i <= toRemove; i++) {
+                    scene.remove(bullets[0]);
+                    bullets.shift();
+                }
                 renderer.render(scene, camera);
                 requestAnimationFrame(render);
             }
 
+            const planeSize = 40;
+            const planeGeo = new THREE.PlaneBufferGeometry
+                (planeSize, planeSize);
+            const planeMat = new THREE.MeshPhongMaterial({ color: 0xcfcfcf });
+            const mesh = new THREE.Mesh(planeGeo, planeMat);
+            mesh.rotation.x = Math.PI * -.5;
+            mesh.position.y = -2;
+            scene.add(mesh);
+
             const color = 0xFFFFFF;
             const intensity = 1;
             const light = new THREE.DirectionalLight(color, intensity);
-            light.position.set(-1, 2, 4);
+            light.position.set(0, 5, 5);
             scene.add(light);
+
+            const skyColor = 0xB1E1FF;  // light blue
+            const groundColor = 0xB97A20;  // brownish orange
+            //const intensity = 1;
+            const hlight = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+            scene.add(hlight);
+
+            renderer.shadowMap.enabled = true;
+            light.castShadow = true;
+            mesh.receiveShadow = true;
 
 
             function makeInstance(geometry, color, x) {
-                const material = new THREE.MeshBasicMaterial({ color });
+                const material = new THREE.MeshPhongMaterial({ color });
 
                 const cube = new THREE.Mesh(geometry, material);
+                cube.castShadow = true;
                 scene.add(cube);
 
                 cube.position.x = x;
@@ -72,18 +101,45 @@
             }
             function makeBullet() {
                 const bullet = makeInstance(coneGeo, 0xff0000, 0);
-                
-                bullet.rotation.z = -Math.PI / 2;
-                bullet.rotation.y = camera.rotation.y - Math.PI / 2 ;
+
+                bullet.rotation.z = Math.PI / 2;
+                bullet.rotation.y = camera.rotation.y - Math.PI / 2;
                 bullet.position.z = camera.position.z;
 
                 return bullet;
             }
+            prism.faces[0].color = new THREE.Color('blue');
+            prism.faces[1].color = new THREE.Color('blue');
+            prism.faces[2].color = new THREE.Color('blue');
+            prism.faces[3].color = new THREE.Color('blue');
+            prism.faces[4].color = new THREE.Color('red');
+            prism.faces[5].color = new THREE.Color('red');
+            prism.faces[6].color = new THREE.Color('red');
+            prism.faces[7].color = new THREE.Color('red');
+            prism.faces[8].color = new THREE.Color('red');
+            prism.faces[9].color = new THREE.Color('red');
+            prism.faces[10].color = new THREE.Color('red');
+            prism.faces[11].color = new THREE.Color('red');
+            prism.faces[12].color = new THREE.Color('green');
+            prism.faces[13].color = new THREE.Color('green');
+            prism.faces[14].color = new THREE.Color('green');
+            prism.faces[15].color = new THREE.Color('green');
+            prism.faces[16].color = new THREE.Color('purple');
+            prism.faces[17].color = new THREE.Color('purple');
+            prism.faces[18].color = new THREE.Color('purple');
+            prism.faces[19].color = new THREE.Color('purple');
+            prism.computeFaceNormals();
+            prism.computeVertexNormals();
+            const thing = new THREE.Mesh(prism, new THREE.MeshPhongMaterial({vertexColors: THREE.FaceColors}));
+            thing.castShadow = true;
+            thing.position.x = 2;
+            scene.add(thing);
             const shapes = [
                 makeInstance(geometry, 0x44aa88, 0),
                 makeInstance(geometry, 0x8844aa, -2),
                 //makeInstance(geometry, 0xaa8844, 2),
-                makeInstance(coneGeo, 0xff00000, 2)
+                //makeInstance(prism, 0xff00000, 2)
+                thing
             ];
 
             const bullets = [];
