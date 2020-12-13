@@ -15,10 +15,14 @@
     <script type="module">
         import * as THREE from './three.module.js';
         import { geometry as prism } from './geometry1.js';
+        import { geo2 as guy } from './geometry2.js';
 
         function main() {
             const canvas = document.querySelector('#canvas');
-            const renderer = new THREE.WebGLRenderer({ canvas });
+            const renderer = new THREE.WebGLRenderer({
+                canvas
+            });
+            renderer.setSize(1000, 500);
 
             const fov = 75;
             const aspect = 2;  // canvas default = 2 = 300/150
@@ -63,9 +67,17 @@
             }
 
             const planeSize = 40;
+            const loader = new THREE.TextureLoader();
+            const texture =
+                loader.load('./jose.jpg');
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.magFilter = THREE.NearestFilter;
+            const repeats = planeSize / 2;
+            texture.repeat.set(repeats, repeats);
             const planeGeo = new THREE.PlaneBufferGeometry
                 (planeSize, planeSize);
-            const planeMat = new THREE.MeshPhongMaterial({ color: 0xcfcfcf });
+            const planeMat = new THREE.MeshPhongMaterial({ map: texture, side: THREE.DoubleSide });   //({ color: 0xcfcfcf });
             const mesh = new THREE.Mesh(planeGeo, planeMat);
             mesh.rotation.x = Math.PI * -.5;
             mesh.position.y = -2;
@@ -130,16 +142,84 @@
             prism.faces[19].color = new THREE.Color('purple');
             prism.computeFaceNormals();
             prism.computeVertexNormals();
-            const thing = new THREE.Mesh(prism, new THREE.MeshPhongMaterial({vertexColors: THREE.FaceColors}));
+            const thing = new THREE.Mesh(prism, new THREE.MeshPhongMaterial({ vertexColors: THREE.FaceColors }));
             thing.castShadow = true;
             thing.position.x = 2;
             scene.add(thing);
+
+            const skin = new THREE.Color(0xf1c276);
+            const shirt = new THREE.Color(0x8ff5fe);
+            guy.faces[10].color = skin;
+            guy.faces[11].color = skin;
+            guy.faces[12].color = skin;
+            guy.faces[13].color = skin;
+            guy.faces[14].color = skin;
+            guy.faces[15].color = skin;
+            guy.faces[16].color = skin;
+            guy.faces[17].color = skin;
+            guy.faces[18].color = skin;
+            guy.faces[19].color = skin;
+            guy.faces[0].color = shirt;
+            guy.faces[1].color = shirt;
+            guy.faces[2].color = shirt;
+            guy.faces[3].color = shirt;
+            guy.faces[4].color = shirt;
+            guy.faces[5].color = shirt;
+            guy.faces[6].color = shirt;
+            guy.faces[7].color = shirt;
+            guy.faces[8].color = shirt;
+            guy.faces[9].color = shirt;
+            guy.faces[20].color = new THREE.Color("black");
+            guy.faces[21].color = new THREE.Color("black");
+            guy.faces[22].color = new THREE.Color("black");
+            guy.faces[23].color = new THREE.Color("black");
+            guy.faces[24].color = new THREE.Color("black");
+            guy.faces[25].color = new THREE.Color("black");
+            guy.faces[26].color = new THREE.Color("black");
+            guy.faces[27].color = new THREE.Color("black");
+            guy.faces[28].color = shirt;
+            guy.faces[29].color = shirt;
+            guy.faces[30].color = shirt;
+            guy.faces[31].color = shirt;
+            guy.faces[32].color = shirt;
+            guy.faces[33].color = shirt;
+            guy.faces[34].color = shirt;
+            guy.faces[35].color = shirt;
+            guy.faces[36].color = shirt;
+            guy.faces[37].color = shirt;
+            guy.faces[38].color = shirt;
+            guy.faces[39].color = shirt;
+            guy.faces[40].color = shirt;
+            guy.faces[41].color = shirt;
+            guy.faces[42].color = shirt;
+            guy.faces[43].color = shirt;
+            guy.faces[44].color = shirt;
+            guy.faces[45].color = shirt;
+            guy.faces[46].color = shirt;
+            guy.faces[47].color = shirt;
+            guy.computeFaceNormals();
+            guy.computeVertexNormals();
+            const dude = new THREE.Mesh(guy, new THREE.MeshPhongMaterial({ vertexColors: THREE.FaceColors }));
+            dude.castShadow = true;
+            dude.position.x = 4;
+            dude.position.z = 3;
+            scene.add(dude);
+
+            const loader1 = new THREE.TextureLoader();
+            const material = new THREE.MeshPhongMaterial({ 
+                map: loader1.load("./jeb.png")});
+            const jeb = new THREE.Mesh(geometry, material);
+            jeb.castShadow = true;
+            jeb.position.x = -4;
+            jeb.position.z = 3;
+            scene.add(jeb);
+
             const shapes = [
                 makeInstance(geometry, 0x44aa88, 0),
                 makeInstance(geometry, 0x8844aa, -2),
                 //makeInstance(geometry, 0xaa8844, 2),
                 //makeInstance(prism, 0xff00000, 2)
-                thing
+                thing, dude, jeb
             ];
 
             const bullets = [];
