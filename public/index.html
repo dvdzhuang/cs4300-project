@@ -206,8 +206,14 @@
             scene.add(dude);
 
             const loader1 = new THREE.TextureLoader();
-            const material = new THREE.MeshPhongMaterial({ 
-                map: loader1.load("./jeb.png")});
+            //const material = new THREE.MeshPhongMaterial();
+            const material = new THREE.MeshPhongMaterial({
+                map: loader1.load("./jeb.png")
+            });
+            material.bumpMap = THREE.ImageUtils.loadTexture("./jeb.png");
+            material.bumpScale = 1;
+            //const material = new THREE.MeshPhongMaterial({ 
+            //    map: loader1.load("./jeb.png")});
             const jeb = new THREE.Mesh(geometry, material);
             jeb.castShadow = true;
             jeb.position.x = -4;
