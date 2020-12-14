@@ -8,6 +8,9 @@
     <script src="render.js"></script>
     <script src="main.js"></script-->
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous">
+        </script>
 </head>
 
 <body>
@@ -42,9 +45,28 @@
             const coneHeight = 1;
             const coneGeo = new THREE.ConeGeometry(coneRad, coneHeight);
 
+            var score = 0;
+
             function render(time) {
                 time *= 0.001;  // convert time to seconds
                 shapes.forEach((cube, ndx) => {
+                    bullets.forEach((bullet, ndx) => {
+                        if (Math.sqrt(Math.pow(cube.position.x - bullet.position.x, 2) +
+                            Math.pow(cube.position.z - bullet.position.z, 2)) < 1) {
+                            scene.remove(cube);
+                            score++;
+                            const $scorelist = $("#score");
+                            $scorelist.empty();
+                            const $li = $(`
+                <li>
+                    <label>
+                        Score:<input type="text" value="${score}" readonly>
+                    </label>
+                </li>
+                `)
+                            $scorelist.append($li);
+                        }
+                    })
                     const speed = 1 + ndx * .1;
                     const rot = time * speed;
                     cube.rotation.x = rot;
@@ -120,26 +142,26 @@
 
                 return bullet;
             }
-            prism.faces[0].color = new THREE.Color('blue');
-            prism.faces[1].color = new THREE.Color('blue');
-            prism.faces[2].color = new THREE.Color('blue');
-            prism.faces[3].color = new THREE.Color('blue');
-            prism.faces[4].color = new THREE.Color('red');
-            prism.faces[5].color = new THREE.Color('red');
-            prism.faces[6].color = new THREE.Color('red');
-            prism.faces[7].color = new THREE.Color('red');
-            prism.faces[8].color = new THREE.Color('red');
-            prism.faces[9].color = new THREE.Color('red');
-            prism.faces[10].color = new THREE.Color('red');
-            prism.faces[11].color = new THREE.Color('red');
-            prism.faces[12].color = new THREE.Color('green');
-            prism.faces[13].color = new THREE.Color('green');
-            prism.faces[14].color = new THREE.Color('green');
-            prism.faces[15].color = new THREE.Color('green');
-            prism.faces[16].color = new THREE.Color('purple');
-            prism.faces[17].color = new THREE.Color('purple');
-            prism.faces[18].color = new THREE.Color('purple');
-            prism.faces[19].color = new THREE.Color('purple');
+            prism.faces[0].color = new THREE.Color('skyblue');
+            prism.faces[1].color = new THREE.Color('skyblue');
+            prism.faces[2].color = new THREE.Color('skyblue');
+            prism.faces[3].color = new THREE.Color('skyblue');
+            prism.faces[4].color = new THREE.Color('lightsalmon');
+            prism.faces[5].color = new THREE.Color('lightsalmon');
+            prism.faces[6].color = new THREE.Color('lightsalmon');
+            prism.faces[7].color = new THREE.Color('lightsalmon');
+            prism.faces[8].color = new THREE.Color('lightsalmon');
+            prism.faces[9].color = new THREE.Color('lightsalmon');
+            prism.faces[10].color = new THREE.Color('lightsalmon');
+            prism.faces[11].color = new THREE.Color('lightsalmon');
+            prism.faces[12].color = new THREE.Color('lightgreen');
+            prism.faces[13].color = new THREE.Color('lightgreen');
+            prism.faces[14].color = new THREE.Color('lightgreen');
+            prism.faces[15].color = new THREE.Color('lightgreen');
+            prism.faces[16].color = new THREE.Color('mediumorchid');
+            prism.faces[17].color = new THREE.Color('mediumorchid');
+            prism.faces[18].color = new THREE.Color('mediumorchid');
+            prism.faces[19].color = new THREE.Color('mediumorchid');
             prism.computeFaceNormals();
             prism.computeVertexNormals();
             const thing = new THREE.Mesh(prism, new THREE.MeshPhongMaterial({ vertexColors: THREE.FaceColors }));
@@ -206,26 +228,33 @@
             scene.add(dude);
 
             const loader1 = new THREE.TextureLoader();
-            //const material = new THREE.MeshPhongMaterial();
+            const material2 = new THREE.MeshPhongMaterial({
+                map: loader1.load("./jeb.png")
+            });
             const material = new THREE.MeshPhongMaterial({
                 map: loader1.load("./jeb.png")
             });
-            material.bumpMap = THREE.ImageUtils.loadTexture("./jeb.png");
+            material.bumpMap = THREE.ImageUtils.loadTexture("./jebbump.png");
             material.bumpScale = 1;
             //const material = new THREE.MeshPhongMaterial({ 
             //    map: loader1.load("./jeb.png")});
             const jeb = new THREE.Mesh(geometry, material);
             jeb.castShadow = true;
-            jeb.position.x = -4;
+            jeb.position.x = -5;
             jeb.position.z = 3;
             scene.add(jeb);
+            const jeb2 = new THREE.Mesh(geometry, material2);
+            jeb2.castShadow = true;
+            jeb2.position.x = -3;
+            jeb2.position.z = 5;
+            scene.add(jeb2);
 
-            const shapes = [
+            let shapes = [
                 makeInstance(geometry, 0x44aa88, 0),
                 makeInstance(geometry, 0x8844aa, -2),
                 //makeInstance(geometry, 0xaa8844, 2),
                 //makeInstance(prism, 0xff00000, 2)
-                thing, dude, jeb
+                thing, dude, jeb, jeb2
             ];
 
             const bullets = [];
@@ -252,6 +281,7 @@
         }
         main();
     </script>
+    <ol id="score"></ol>
 </body>
 
 </html>
